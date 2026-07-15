@@ -1,0 +1,58 @@
+{
+  "name": "rojo-feature-sync",
+  "displayName": "Rojo Feature Sync",
+  "description": "Automatically organizes Roblox projects into a feature based system. Generate and maintain Rojo mappings, bootstrap your project, synchronize folders, and keep your studio hierarchy in sync as your codebase grows.",
+  "version": "1.0.0",
+  "engines": {
+    "vscode": "^1.125.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "workspaceContains:rojo-feature-sync.toml"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+		"command": "rojo-feature-sync.initialize",
+		"title": "Rojo Feature Sync: Initialize"
+      },
+      {
+        "command": "rojo-feature-sync.startSynchronization",
+        "title": "Rojo Feature Sync: Start Synchronization"
+      },
+      {
+        "command": "rojo-feature-sync.syncNow",
+        "title": "Rojo Feature Sync: Sync Now"
+      },
+      {
+        "command": "rojo-feature-sync.createRuntime",
+        "title": "Rojo Feature Sync: Create Runtime"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.125.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "24.x",
+    "typescript-eslint": "^8.61.1",
+    "eslint": "^10.5.0",
+    "typescript": "^6.0.3",
+    "@vscode/test-cli": "^0.0.15",
+    "@vscode/test-electron": "^3.0.0"
+  },
+  "overrides": {
+    "diff": "^8.0.4",
+    "serialize-javascript": "^7.0.6"
+  }
+}

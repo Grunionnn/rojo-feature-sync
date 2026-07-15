@@ -59,6 +59,8 @@ The base paths are mapped as follows:
 | `src/Core/Client` | `StarterPlayer.StarterPlayerScripts.Core` |
 | `src/Core/Server` | `ServerScriptService.Core` |
 | `src/Core/Shared` | `ReplicatedStorage.Shared.Core` |
+| `Packages` | `ReplicatedStorage.Packages` |
+| `ServerPackages` | `ServerScriptService.ServerPackages` |
 | `src/Startup/ClientBootstrapper.client.luau` | `StarterPlayer.StarterPlayerScripts.ClientBootstrapper` |
 | `src/Startup/ServerBootstrapper.server.luau` | `ServerScriptService.ServerBootstrapper` |
 
@@ -116,12 +118,14 @@ Older configurations are migrated to version 1 when synchronization starts. Migr
 
 ## Synchronization Behavior
 
-Folder creation, deletion, and renaming under `src/Features`, `src/Core`, or `src/Startup` schedules a synchronization. Events are debounced, and each synchronization rescans the complete feature directory before replacing the managed mappings.
+Folder creation, deletion, and renaming under `src/Features`, `src/Core`, `src/Startup`, `Packages`, or `ServerPackages` schedules a synchronization. Events are debounced, and each synchronization rescans the complete feature directory before replacing the managed mappings. Package mappings are added only while their corresponding root folders exist, so installing or deleting packages updates the project file automatically.
 
 The first initialization intentionally removes unrelated service mappings from the Rojo `tree`. Top-level project properties such as the project name and place IDs remain intact. After initialization, routine and manual synchronization update only these managed entries:
 
 - `ReplicatedStorage.Shared.Core`
 - `ReplicatedStorage.Shared.Features`
+- `ReplicatedStorage.Packages`
+- `ServerScriptService.ServerPackages`
 - `ServerScriptService.Core`
 - `ServerScriptService.Features`
 - `ServerScriptService.ServerBootstrapper`

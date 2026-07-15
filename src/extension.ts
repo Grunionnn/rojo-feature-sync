@@ -210,6 +210,7 @@ function applyBaseMappings(project: JsonObject): void {
 
 	const replicatedStorage = asObject(tree.ReplicatedStorage);
 	tree.ReplicatedStorage = replicatedStorage;
+	replicatedStorage.Packages = { $path: "Packages" };
 	const shared = asObject(replicatedStorage.Shared);
 	replicatedStorage.Shared = shared;
 	shared.$className = "Folder";
@@ -415,8 +416,18 @@ async function syncFeatureMappings(
 	tree.StarterPlayer = starterPlayer;
 	const starterPlayerScripts = asObject(starterPlayer.StarterPlayerScripts);
 	starterPlayer.StarterPlayerScripts = starterPlayerScripts;
-	const [sharedCoreExists, serverCoreExists, clientCoreExists, serverBootstrapperExists, clientBootstrapperExists] =
+	const [
+		packagesExist,
+		serverPackagesExist,
+		sharedCoreExists,
+		serverCoreExists,
+		clientCoreExists,
+		serverBootstrapperExists,
+		clientBootstrapperExists,
+	] =
 		await Promise.all([
+			pathExists(vscode.Uri.joinPath(workspaceFolderUri, "Packages")),
+			pathExists(vscode.Uri.joinPath(workspaceFolderUri, "ServerPackages")),
 			pathExists(vscode.Uri.joinPath(workspaceFolderUri, "src", "Core", "Shared")),
 			pathExists(vscode.Uri.joinPath(workspaceFolderUri, "src", "Core", "Server")),
 			pathExists(vscode.Uri.joinPath(workspaceFolderUri, "src", "Core", "Client")),
@@ -438,9 +449,11 @@ async function syncFeatureMappings(
 			),
 		]);
 
+	setPathMapping(replicatedStorage, "Packages", "Packages", packagesExist);
 	shared.$className = "Folder";
 	setPathMapping(shared, "Core", "src/Core/Shared", sharedCoreExists);
 	shared.Features = folderNode(mappings.shared);
+	setPathMapping(serverScriptService, "ServerPackages", "ServerPackages", serverPackagesExist);
 	setPathMapping(serverScriptService, "Core", "src/Core/Server", serverCoreExists);
 	serverScriptService.Features = folderNode(mappings.server);
 	setPathMapping(
@@ -477,14 +490,24 @@ function createSynchronizationSession(
 	workspaceFolderUri: vscode.Uri,
 ): SynchronizationSession {
 	const projectFileUri = vscode.Uri.joinPath(workspaceFolderUri, "default.project.json");
-	const watchers = ["Features", "Core", "Startup"].map((folderName) =>
+	const sourceWatchers = ["Features", "Core", "Startup"].map((folderName) =>
 		vscode.workspace.createFileSystemWatcher(
 			new vscode.RelativePattern(workspaceFolderUri, `src/${folderName}/**`),
 		),
 	);
+	const packageWatchers = ["Packages", "ServerPackages"].flatMap((folderName) => [
+		vscode.workspace.createFileSystemWatcher(
+			new vscode.RelativePattern(workspaceFolderUri, folderName),
+		),
+		vscode.workspace.createFileSystemWatcher(
+			new vscode.RelativePattern(workspaceFolderUri, `${folderName}/**`),
+		),
+	]);
+	const watchers = [...sourceWatchers, ...packageWatchers];
 	for (const folderName of ["Features", "Core", "Startup"]) {
 		log("Info", `Watching src/${folderName}`);
 	}
+	log("Info", "Watching Packages and ServerPackages");
 	let debounceTimer: NodeJS.Timeout | undefined;
 	let syncRunning = false;
 	let syncRequested = false;

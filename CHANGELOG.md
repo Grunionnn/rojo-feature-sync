@@ -21,6 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Problems-panel diagnostics for configuration, structure, casing, duplicates, and missing entry points.
 - Quick Fix support for incorrectly cased runtime folders.
 - Automatic `.gitignore` entries for Wally packages, lockfile, and project configuration.
+- Dynamic `Packages` and `ServerPackages` Rojo mappings that follow root package-folder creation and deletion.
 - Automatic Selene Roblox standard configuration.
 
 ### Behavior

@@ -1,5 +1,6 @@
 {
   "name": "rojo-feature-sync",
+  "publisher": "Grunionnn",
   "displayName": "Rojo Feature Sync",
   "description": "Automatically organizes Roblox projects into a feature based system. Generate and maintain Rojo mappings, bootstrap your project, synchronize folders, and keep your studio hierarchy in sync as your codebase grows.",
   "version": "1.0.0",

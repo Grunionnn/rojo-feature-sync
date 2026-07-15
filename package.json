@@ -5,10 +5,6 @@
   "description": "Maps feature-based Roblox project folders into a Rojo project file.",
   "version": "1.0.0",
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Grunionnn/rojo-feature-sync.git"
-  },
   "engines": {
     "vscode": "^1.125.0"
   },

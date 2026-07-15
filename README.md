@@ -28,7 +28,7 @@ The generated client bootstrapper waits for the local player's `Loaded` attribut
 ## Getting Started
 
 > [!CAUTION]
-> **Initialize permanently deletes and replaces the existing `src` directory after confirmation.** It also replaces the first-run Rojo tree with the managed runtime hierarchy. Commit or back up the project before initializing.
+> Initialization replaces the existing `src` directory only after showing a modal confirmation. It also replaces the first-run Rojo tree with the managed runtime hierarchy. Commit or back up the project before confirming initialization.
 
 1. Open the Roblox project folder in VS Code.
 2. Confirm that `default.project.json` and `src` exist at the workspace root.

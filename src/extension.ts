@@ -34,10 +34,10 @@ function log(level: "Info" | "Warning" | "Error", message: string): void {
 
 function setSyncStatus(state: "disabled" | "syncing" | "ready" | "warning", detail?: string): void {
 	const statuses = {
-		disabled: "$(circle-slash) Rojo Sync ⚠",
+		disabled: "$(circle-slash) Rojo Sync",
 		syncing: "$(sync~spin) Rojo Sync...",
-		ready: "$(check) Rojo Sync ✓",
-		warning: "$(warning) Rojo Sync ⚠",
+		ready: "$(check) Rojo Sync",
+		warning: "$(warning) Rojo Sync",
 	};
 	statusBarItem.text = statuses[state];
 	statusBarItem.tooltip = detail ?? "Rojo Feature Sync";

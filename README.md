@@ -88,7 +88,7 @@ Inventory/Shared → ReplicatedStorage/Shared/Features/Inventory
 
 Only runtime directories that exist are mapped. For example, a Client-only feature does not require empty Server or Shared directories.
 
-You can create the folders manually or run **Rojo Feature Sync: Create Runtime**. The command prompts for a Feature or Core target and a runtime, then creates the directory and an `init.luau` template without overwriting an existing entry point.
+You can create the folders manually or run **Rojo Feature Sync: Create Runtime**. The command prompts for a Feature or Core target and a runtime, then creates the directory. Client and Server runtimes also receive an `init.luau` template without overwriting an existing entry point; Shared runtimes do not require one.
 
 ## Commands
 
@@ -97,7 +97,7 @@ You can create the folders manually or run **Rojo Feature Sync: Create Runtime**
 | **Rojo Feature Sync: Initialize** | Replaces the existing source architecture and creates the initial mappings. |
 | **Rojo Feature Sync: Start Synchronization** | Starts the filesystem watchers and performs a full rescan. |
 | **Rojo Feature Sync: Sync Now** | Requests an immediate full rescan without restarting the watcher. |
-| **Rojo Feature Sync: Create Runtime** | Creates a Feature or Core runtime and its `init.luau`. |
+| **Rojo Feature Sync: Create Runtime** | Creates a Feature or Core runtime, including `init.luau` for Client and Server. |
 
 Clicking the Rojo Sync status bar item also runs **Sync Now**.
 
@@ -142,7 +142,7 @@ Rojo Feature Sync reports the following in VS Code's Problems panel:
 - Malformed `default.project.json`.
 - Invalid or outdated project configuration.
 - Missing required project paths.
-- Missing runtime `init.luau` files.
+- Missing Client or Server runtime `init.luau` files.
 - Files placed directly in a feature instead of a runtime folder.
 - Unknown runtime directories.
 - Incorrect runtime casing such as `client`, `CLIENT`, or `shared`.

@@ -361,7 +361,7 @@ async function scanFeatures(workspaceFolderUri: vscode.Uri): Promise<FeatureMapp
 			if (runtimeDirectories.has(runtimeName)) {
 				target[featureName] = { $path: `src/Features/${featureName}/${runtimeName}` };
 				const initUri = vscode.Uri.joinPath(featureUri, runtimeName, "init.luau");
-				if (!(await pathExists(initUri))) {
+				if (runtimeName !== "Shared" && !(await pathExists(initUri))) {
 					diagnostics.push(
 						new vscode.Diagnostic(
 							diagnosticRange,
@@ -760,7 +760,7 @@ async function createRuntime(): Promise<void> {
 			: vscode.Uri.joinPath(workspaceFolder.uri, "src", "Features", featureName!, runtime);
 	await vscode.workspace.fs.createDirectory(runtimeUri);
 	const initUri = vscode.Uri.joinPath(runtimeUri, "init.luau");
-	if (!(await pathExists(initUri))) {
+	if (runtime !== "Shared" && !(await pathExists(initUri))) {
 		const moduleName = (featureName ?? `${runtime}Core`).replace(/[^A-Za-z0-9_]/g, "");
 		const template = `local ${moduleName} = {}\n\nfunction ${moduleName}:Init()\nend\n\nfunction ${moduleName}:Start()\nend\n\nreturn ${moduleName}\n`;
 		await vscode.workspace.fs.writeFile(initUri, new TextEncoder().encode(template));

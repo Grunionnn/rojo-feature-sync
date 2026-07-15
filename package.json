@@ -3,6 +3,15 @@
   "displayName": "Rojo Feature Sync",
   "description": "Automatically organizes Roblox projects into a feature based system. Generate and maintain Rojo mappings, bootstrap your project, synchronize folders, and keep your studio hierarchy in sync as your codebase grows.",
   "version": "1.0.0",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Grunionnn/rojo-feature-sync.git"
+  },
+  "homepage": "https://github.com/Grunionnn/rojo-feature-sync#readme",
+  "bugs": {
+    "url": "https://github.com/Grunionnn/rojo-feature-sync/issues"
+  },
   "engines": {
     "vscode": "^1.125.0"
   },

@@ -194,3 +194,7 @@ Use `npm run watch` while developing the extension.
 ## Release Notes
 
 See [CHANGELOG.md](CHANGELOG.md) for release history.
+
+## License
+
+Rojo Feature Sync is available under the [MIT License](LICENSE.md).

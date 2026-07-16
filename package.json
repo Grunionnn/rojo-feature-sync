@@ -45,6 +45,14 @@
         "title": "Rojo Feature Sync: Sync Now"
       },
       {
+        "command": "rojo-feature-sync.pauseSynchronization",
+        "title": "Rojo Feature Sync: Pause Live Sync"
+      },
+      {
+        "command": "rojo-feature-sync.resumeSynchronization",
+        "title": "Rojo Feature Sync: Resume Live Sync"
+      },
+      {
         "command": "rojo-feature-sync.createRuntime",
         "title": "Rojo Feature Sync: Create Runtime"
       }

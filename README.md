@@ -97,6 +97,8 @@ You can create the folders manually or run **Rojo Feature Sync: Create Runtime**
 | **Rojo Feature Sync: Initialize** | Replaces the existing source architecture and creates the initial mappings. |
 | **Rojo Feature Sync: Start Synchronization** | Starts the filesystem watchers and performs a full rescan. |
 | **Rojo Feature Sync: Sync Now** | Requests an immediate full rescan without restarting the watcher. |
+| **Rojo Feature Sync: Pause Live Sync** | Temporarily ignores filesystem changes without stopping the synchronization session. |
+| **Rojo Feature Sync: Resume Live Sync** | Resumes filesystem monitoring and performs a full rescan. |
 | **Rojo Feature Sync: Create Runtime** | Creates a Feature or Core runtime, including `init.luau` for Client and Server. |
 
 Clicking the Rojo Sync status bar item also runs **Sync Now**.
@@ -119,6 +121,8 @@ Older configurations are migrated to version 1 when synchronization starts. Migr
 ## Synchronization Behavior
 
 Folder creation, deletion, and renaming under `src/Features`, `src/Core`, `src/Startup`, `Packages`, or `ServerPackages` schedules a synchronization. Events are debounced, and each synchronization rescans the complete feature directory before replacing the managed mappings. Package mappings are added only while their corresponding root folders exist, so installing or deleting packages updates the project file automatically.
+
+Live synchronization can be paused from the Command Palette. Changes made while paused are not processed automatically; resuming always performs a full rescan, so all accumulated filesystem changes are applied at once. **Sync Now** remains available for an intentional manual rescan while live sync is paused.
 
 The first initialization intentionally removes unrelated service mappings from the Rojo `tree`. Top-level project properties such as the project name and place IDs remain intact. After initialization, routine and manual synchronization update only these managed entries:
 

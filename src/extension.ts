@@ -20,6 +20,9 @@ interface FeatureMappings {
 
 interface SynchronizationSession extends vscode.Disposable {
 	requestSync(): void;
+	pause(): void;
+	resume(): void;
+	isPaused(): boolean;
 }
 
 let activeSynchronization: SynchronizationSession | undefined;
@@ -32,11 +35,15 @@ function log(level: "Info" | "Warning" | "Error", message: string): void {
 	outputChannel.appendLine(`[${level}] ${message}`);
 }
 
-function setSyncStatus(state: "disabled" | "syncing" | "ready" | "warning", detail?: string): void {
+function setSyncStatus(
+	state: "disabled" | "syncing" | "ready" | "paused" | "warning",
+	detail?: string,
+): void {
 	const statuses = {
 		disabled: "$(circle-slash) Rojo Sync",
 		syncing: "$(sync~spin) Rojo Sync...",
 		ready: "$(check) Rojo Sync",
+		paused: "$(debug-pause) Rojo Sync Paused",
 		warning: "$(warning) Rojo Sync",
 	};
 	statusBarItem.text = statuses[state];
@@ -511,6 +518,7 @@ function createSynchronizationSession(
 	let debounceTimer: NodeJS.Timeout | undefined;
 	let syncRunning = false;
 	let syncRequested = false;
+	let paused = false;
 	let disposed = false;
 
 	const runRequestedSyncs = async (): Promise<void> => {
@@ -528,7 +536,10 @@ function createSynchronizationSession(
 					throw new Error("Synchronization did not complete.");
 				}
 			} while (syncRequested && !disposed);
-			setSyncStatus("ready", "Rojo mappings are synchronized");
+			setSyncStatus(
+				paused ? "paused" : "ready",
+				paused ? "Live synchronization is paused" : "Rojo mappings are synchronized",
+			);
 			log("Info", "Synchronization finished");
 		} catch (error) {
 			const message = error instanceof Error ? error.message : String(error);
@@ -548,6 +559,9 @@ function createSynchronizationSession(
 	};
 
 	const scheduleSync = (): void => {
+		if (paused) {
+			return;
+		}
 		if (debounceTimer) {
 			clearTimeout(debounceTimer);
 		}
@@ -562,6 +576,24 @@ function createSynchronizationSession(
 
 	const session: SynchronizationSession = {
 		requestSync,
+		pause: () => {
+			paused = true;
+			if (debounceTimer) {
+				clearTimeout(debounceTimer);
+				debounceTimer = undefined;
+			}
+			setSyncStatus("paused", "Live synchronization is paused");
+			log("Info", "Live synchronization paused");
+		},
+		resume: () => {
+			if (!paused) {
+				return;
+			}
+			paused = false;
+			log("Info", "Live synchronization resumed");
+			requestSync();
+		},
+		isPaused: () => paused,
 		dispose: () => {
 			disposed = true;
 			if (debounceTimer) {
@@ -574,6 +606,36 @@ function createSynchronizationSession(
 	};
 	context.subscriptions.push(session);
 	return session;
+}
+
+function pauseSynchronization(): void {
+	if (!activeSynchronization) {
+		void vscode.window.showInformationMessage("Rojo Feature Sync is not currently active.");
+		return;
+	}
+	if (activeSynchronization.isPaused()) {
+		void vscode.window.showInformationMessage("Rojo Feature Sync is already paused.");
+		return;
+	}
+
+	activeSynchronization.pause();
+	void vscode.window.showInformationMessage("Rojo Feature Sync live synchronization paused.");
+}
+
+function resumeSynchronization(): void {
+	if (!activeSynchronization) {
+		void vscode.window.showInformationMessage(
+			"Rojo Feature Sync is not active. Run Start Synchronization first.",
+		);
+		return;
+	}
+	if (!activeSynchronization.isPaused()) {
+		void vscode.window.showInformationMessage("Rojo Feature Sync is already running.");
+		return;
+	}
+
+	activeSynchronization.resume();
+	void vscode.window.showInformationMessage("Rojo Feature Sync live synchronization resumed.");
 }
 
 async function startSynchronization(
@@ -602,8 +664,12 @@ async function startSynchronization(
 
 	if (!activeSynchronization) {
 		activeSynchronization = createSynchronizationSession(context, workspaceFolder.uri);
+		activeSynchronization.requestSync();
+	} else if (activeSynchronization.isPaused()) {
+		activeSynchronization.resume();
+	} else {
+		activeSynchronization.requestSync();
 	}
-	activeSynchronization.requestSync();
 	if (showMessage) {
 		void vscode.window.showInformationMessage("Rojo Feature Sync synchronization is active.");
 	}
@@ -942,6 +1008,12 @@ export function activate(context: vscode.ExtensionContext): void {
 				const message = error instanceof Error ? error.message : String(error);
 				void vscode.window.showErrorMessage(`Rojo Feature Sync failed: ${message}`);
 			}
+		}),
+		vscode.commands.registerCommand("rojo-feature-sync.pauseSynchronization", () => {
+			pauseSynchronization();
+		}),
+		vscode.commands.registerCommand("rojo-feature-sync.resumeSynchronization", () => {
+			resumeSynchronization();
 		}),
 		vscode.commands.registerCommand("rojo-feature-sync.createRuntime", async () => {
 			try {

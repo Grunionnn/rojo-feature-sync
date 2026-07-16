@@ -23,6 +23,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Automatic `.gitignore` entries for Wally packages, lockfile, and project configuration.
 - Dynamic `Packages` and `ServerPackages` Rojo mappings that follow root package-folder creation and deletion.
 - Automatic Selene Roblox standard configuration.
+- Commands to pause and resume live synchronization, with a full rescan on resume.
 
 ### Behavior
 
